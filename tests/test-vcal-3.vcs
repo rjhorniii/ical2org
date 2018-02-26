@@ -1,0 +1,87 @@
+BEGIN:VCALENDAR
+METHOD:REQUEST
+PRODID:Microsoft Exchange Server 2007
+VERSION:2.0
+BEGIN:VTIMEZONE
+TZID:Eastern Standard Time
+BEGIN:STANDARD
+DTSTART:16010101T020000
+TZOFFSETFROM:-0400
+TZOFFSETTO:-0500
+RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=1SU;BYMONTH=11
+END:STANDARD
+BEGIN:DAYLIGHT
+DTSTART:16010101T020000
+TZOFFSETFROM:-0500
+TZOFFSETTO:-0400
+RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=2SU;BYMONTH=3
+END:DAYLIGHT
+END:VTIMEZONE
+BEGIN:VEVENT
+ORGANIZER;CN="Vastagh, Stephen":MAILTO:svastagh@medicalimaging.org
+ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=DICOM WG-1
+ 4 Roster (DoPseudoNotReply@mita.org):MAILTO:DoPseudoNotReply@mita.org
+DESCRIPTION;LANGUAGE=en-US:PLEASE ACCEPT OR DECLINE ONLY.  The Accept/Decli
+ ne response is recorded but not opened.  Use a separate e-mail for additio
+ nal messages to the sender.  Please do not change the subject line when re
+ sponding!\nFeel free to forward this invitation to anyone that may be inte
+ rested in the re-activation of WG-14 Security. See  http://www.dicomstanda
+ rd.org/participate/  for more information on participation.\n=============
+ ==========================================================================
+ ==========================================================================
+ ==\nTo:  DICOM WG-14 Security\nLawrence Tarbox\, User Co-Chair\, invites y
+ ou to the February t-con of WG-14\, on Wednesday\, February 21\, 2018 -  0
+ 9:00 - 10:00 USA ET.\nThe Agenda will be distributed later and be also pos
+ ted in the meeting foldeftp://d9-workgrps:Private15@medical.nema.org/MEDIC
+ AL/Private/Dicom/WORKGRPS/Wg14/2018/2018-02-21/\nPlease post proposals\, r
+ elevant papers and other information in the above meeting folder.   (For a
+  refresher on how to use the DICOM ftp folders see: ftp://d9-workgrps:Priv
+ ate15@medical.nema.org/MEDICAL/Private/Dicom/DICOM-practical-info-for-Memb
+ ers&Observers.doc )\n=====================================================
+ ==========================================================================
+ =====================================================\nThis e-mail include
+ s the call-in/log-on information below. The same call-in / log-on informat
+ ion is also posted in the DICOM Calendar: search (google)  ‘DICOM Calend
+ ar’ and double click on this event.\n\n\nDICOM WG-14 t-con 2018-02-21 09
+ .00-10.00 USA ET\nWed\, Feb 21\, 2018 9:00 AM - 10:00 AM EST\nPlease join 
+ my meeting from your computer\, tablet or smartphone.\nhttps://global.goto
+ meeting.com/join/126909565\nYou can also dial in using your phone.\nUnited
+  States: +1 (786) 535-3219\nAccess Code: 126-909-565\nMore phone numbers\n
+ Australia: +61 2 9087 3604\nAustria: +43 7 2081 5427\nBelgium: +32 28 93 7
+ 018\nCanada: +1 (647) 497-9350\nDenmark: +45 32 72 03 82\nFinland: +358 92
+ 3 17 0568\nFrance: +33 170 950 594\nGermany: +49 692 5736 7317\nIreland: +
+ 353 15 360 728\nItaly: +39 0 247 92 13 01\nNetherlands: +31 207 941 377\nN
+ ew Zealand: +64 9 280 6302\nNorway: +47 21 93 37 51\nSpain: +34 932 75 200
+ 4\nSweden: +46 853 527 827\nSwitzerland: +41 225 4599 78\nUnited Kingdom: 
+ +44 20 3713 5028\nJoining from a video-conferencing room or system?\nDial:
+  67.217.95.2##126909565\nCisco devices: 126909565@67.217.95.2<mailto:12690
+ 9565@67.217.95.2>\nFirst GoToMeeting? Let's do a quick system check: https
+ ://link.gotomeeting.com/system-check\n\nSincerely\,\n\nStephen Vastagh\nSe
+ cretary Pro Tem\nConsultant to the DICOM Secretariat\n\n\n\n
+SUMMARY;LANGUAGE=en-US:DICOM WG-14 t-con 2018-02-21 09.00-10.00 USA ET - In
+ vitation
+DTSTART;TZID=Eastern Standard Time:20180221T090000
+DTEND;TZID=Eastern Standard Time:20180221T100000
+UID:040000008200E00074C5B7101A82E00800000000C0E8178E9893D301000000000000000
+ 010000000F09AE7F295CED8489EB0AF6A3AD5C79B
+CLASS:PUBLIC
+PRIORITY:5
+DTSTAMP:20180122T210242Z
+TRANSP:OPAQUE
+STATUS:CONFIRMED
+SEQUENCE:0
+LOCATION;LANGUAGE=en-US:https://global.gotomeeting.com/join/126909565 
+X-MICROSOFT-CDO-APPT-SEQUENCE:0
+X-MICROSOFT-CDO-OWNERAPPTID:1683363810
+X-MICROSOFT-CDO-BUSYSTATUS:TENTATIVE
+X-MICROSOFT-CDO-INTENDEDSTATUS:BUSY
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+X-MICROSOFT-CDO-IMPORTANCE:1
+X-MICROSOFT-CDO-INSTTYPE:0
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:REMINDER
+TRIGGER;RELATED=START:-PT15M
+END:VALARM
+END:VEVENT
+END:VCALENDAR
