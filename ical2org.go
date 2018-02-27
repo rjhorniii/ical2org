@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"strings"
-	"github.com/PuloV/ics-golang"
+	"github.com/rjhorniii/ics-golang"
+	"flag"
 )
 
 func main() {
@@ -15,8 +15,13 @@ func main() {
 	// get the input chan
 	inputChan := parser.GetInputChan()
 
+	// define flags
+
+	// parse flags and arguments
+	flag.Parse()
+
 	// send referenced arguments
-	for _, url := range os.Args[1:] {
+	for _, url := range flag.Args()[0:] {
 		inputChan <- url
 	}
 
