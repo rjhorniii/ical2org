@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/PuloV/ics-golang"
-//	"github.com/davecgh/go-spew/spew"
+	//	"github.com/davecgh/go-spew/spew"
 )
 
 func main() {
@@ -26,16 +26,16 @@ func main() {
 	//  check for errors
 	if err == nil {
 
-	   for _, calendar := range cal {
-	       allEvents := calendar.GetEventsByDates()
-	       for i, event := range allEvents {
+		for _, calendar := range cal {
+			allEvents := calendar.GetEventsByDates()
+			for i, event := range allEvents {
 
-		// print the event
-		fmt.Printf("%+v \n", i)
-		fmt.Printf("%+v \n", event)
-		   }
-//		spew.Dump( allEvents)
-	    }				
+				// print the event
+				fmt.Printf("%+v \n", i)
+				fmt.Printf("%+v \n", event)
+			}
+			//		spew.Dump( allEvents)
+		}
 	} else {
 		// error
 		fmt.Println(err)
