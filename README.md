@@ -2,14 +2,14 @@
 Convert a calendar in ICal format (e.g., .ics) into org-mode structure.
 
 
-Usage: `ical2org [-d=<duplicates>] [-o=output] input files`
+Usage: `ical2org [-d=<duplicates>] [-o=output] [-a=append] input files`
 
 The input files can be either URLs ("http://....") or local files.
 
 The resulting org formatted events will either
 * replace the file specified with -o output,
 * be appended to the file specified with -a output
-* or be sent to stdout.
+* or be sent to stdout if -o and -a are not present.
 
 Converted events have
 * a headline with the Summary from the event,
@@ -17,6 +17,8 @@ Converted events have
 * a drawer ICALCONTENTS with potentially useful information extracted from the event
 * a subheading Description with the description field, and
 * a subheading Location with the Location information
+
+Example output:
 
 ```
 * DECISION MEETING: ITI Planning Monthly Call (11am CT, 12pm ET, 6pm CET) Host key: xxxxxx <2027-10-19 11:00>

@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"log"
 	"github.com/rjhorniii/ics-golang"
 	"strings"
 )
@@ -26,7 +27,7 @@ func main() {
 	if *dupsPtr != "" {
 		fmt.Println("not implemented yet")
 	}
-	if *appPtr != "" && *appPtr == *outPtr {
+	if *appPtr != "" && *outPtr != *outPtr {
 		fmt.Println("can't have both output and append files")
 		os.Exit(1)
 	}
@@ -50,9 +51,24 @@ func main() {
 
 	//  check for errors
 	if err == nil {
+		// set output file when there are events
+		var f *os.File
+		if *outPtr != "" {
+			f, err = os.OpenFile(*outPtr, os.O_TRUNC|os.O_WRONLY|os.O_CREATE, 0600)
+			if err != nil {
+				log.Fatal(err)
+			}
+		} else
+		if *appPtr != "" {
+			f, err = os.OpenFile(*appPtr, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+			if err != nil {
+				log.Fatal(err)
+			}
+		} else {
+			f = os.Stdout
+		}
 
 		for _, calendar := range cal {
-			f := os.Stdout
 			allEvents := calendar.GetEventsByDates()
 			for _, event := range allEvents {
 
