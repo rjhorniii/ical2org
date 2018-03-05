@@ -2,7 +2,9 @@
 Convert a calendar in ICal format (e.g., .ics) into org-mode structure.
 
 
-Usage: `ical2org [-d=<duplicates>] [-o=output] [-a=append] input files`
+Usage: `ical2org [-d=<duplicates>] [-o=output] [-a=append]
+       [--inactive] [--active]
+       [--deadline] [--scheduled] input files`
 
 The input files can be either URLs ("http://....") or local files.
 
@@ -12,8 +14,9 @@ The resulting org formatted events will either
 * or be sent to stdout if -o and -a are not present.
 
 Converted events have
-* a headline with the Summary from the event,
-* a scheduling line
+* a headline with the Summary from the event with a timestamp from event start time.  It will be active by default.
+The option `inactive` can be used to make it an inactive timestamp.
+* an optional scheduling line: if `--scheduled` it will contain `SCHEDULED`; if `--deadline` it will contain `DEADLINE`. 
 * a drawer ICALCONTENTS with potentially useful information extracted from the event
 * a subheading Description with the description field, and
 * a subheading Location with the Location information
@@ -60,8 +63,15 @@ treated as duplicates or not.  If you remove the ORGUID from the
 drawer, a modified event will be treated as different.  ical2org does
 not attempt to match on event contents.  It only looks at the ORGUIDs.
 
-The duplicates file can be an orgmode events file that is being
-mainatined. It can also be a manually maintained org drawer:
+This means that by default you can change task status to DONE, etc.,
+and that modified event will be considered a duplicate.  This way you
+need not ensure that all Ical sources are updated.  It is usually safe
+to re-convert old email attachments and calendars that show historical
+events.
+
+The duplicates file can also be an orgmode file that is being manually
+mainatined. In the manually maintained org drawer you list the ORGUIDs
+that should be considered duplicate:
 
 ```
 * Dummy event headline
@@ -76,7 +86,7 @@ This permits a construction like:
 
 `ical2org -d=events.org https://calendar.google.com/more-stuff  >>events.org`
 
-That can be run regularly, even hourly, without filling the events.org
+to be run regularly, even hourly, without filling the events.org
 file with duplicates.  The internal logic waits for duplicate
 processing to complete before it begins event generation, so it is
 safe to have the output file and duplicates file be the same file.
