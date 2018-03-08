@@ -1,11 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
-	"os"
-	"log"
 	"github.com/rjhorniii/ics-golang"
+	"log"
+	"os"
+	"regexp"
 	"strings"
 )
 
@@ -15,19 +17,19 @@ func main() {
 	var sched bool
 	var active bool
 	var inactive bool
-	
+
 	// define flags
-	dupsPtr := flag.String( "d", "", "Filename for duplicate removal")
+	dupsPtr := flag.String("d", "", "Filename for duplicate removal")
 	appPtr := flag.String("a", "", "Filename to append new events")
 	outPtr := flag.String("o", "", "Filename for event output, default stdout")
 	flag.BoolVar(&sched, "scheduled", false, "Event time should be scheduled")
 	flag.BoolVar(&dead, "deadline", false, "Event time should be scheduled")
 	flag.BoolVar(&active, "active", true, "Event time should be scheduled")
 	flag.BoolVar(&inactive, "inactive", false, "Event time should be scheduled")
-	
+
 	// parse flags and arguments
 	flag.Parse()
-	
+
 	if len(flag.Args()) == 0 {
 		fmt.Println("At least one input argument is required.\n")
 		return
@@ -38,17 +40,17 @@ func main() {
 		os.Exit(1)
 	}
 	// Collect duplicate IDs before parsing inputs
-	var dupIDs string
+
+	dupIDs := map[string]bool{"": true}
 	if *dupsPtr != "" {
-		dupIDs = dups( *dupsPtr)
+		dupIDs = dups(*dupsPtr)
 	}
-	
+
 	//  create new parser
 	parser := ics.New()
 
 	// get the input chan
 	inputChan := parser.GetInputChan()
-
 
 	// send referenced arguments
 	for _, url := range flag.Args() {
@@ -70,8 +72,7 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-		} else
-		if *appPtr != "" {
+		} else if *appPtr != "" {
 			f, err = os.OpenFile(*appPtr, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 			if err != nil {
 				log.Fatal(err)
@@ -84,28 +85,27 @@ func main() {
 			allEvents := calendar.GetEventsByDates()
 			for _, event := range allEvents {
 				// eliminate duplicates
-				if (event[0].GetID() == dupIDs) {
+				if dupIDs[event[0].GetID()] {
 					continue
 				}
-				
 				// print the event
 				// choose active or inactive timestamp
-				format :=  "* %s <%s>\n"
+				format := "* %s <%s>\n"
 				switch {
 				case inactive:
 					format = "* %s [%s]\n"
 				case active:
 					format = "* %s <%s>\n"
-				}					
+				}
 
 				fmt.Fprintf(f, format, strings.Replace(event[0].GetSummary(), `\,`, ",", -1), event[0].GetStart().Format("2006-01-02 15:04"))
 				// Scheduled, Deadline, or nothing depending upon switches
 				switch {
-					case dead:
+				case dead:
 					fmt.Fprintf(f, "    DEADLINE: <%s-%s>\n", event[0].GetStart().Format("2006-01-02 15:04"), event[0].GetEnd().Format("15:04"))
-					case sched:
+				case sched:
 					fmt.Fprintf(f, "    SCHEDULED: <%s-%s>\n", event[0].GetStart().Format("2006-01-02 15:04"), event[0].GetEnd().Format("15:04"))
-					default:
+				default:
 				}
 				// Print drawer contents
 				fmt.Fprintln(f, "  :ICALCONTENTS:")
@@ -130,7 +130,7 @@ func main() {
 				fmt.Fprintf(f, "  :TZIDS: %s\n", tzids)
 				fmt.Fprintln(f, "  :END:")
 				// Print Description and location
-				
+
 				fmt.Fprintln(f, "** Description\n")
 				for _, line := range strings.Split(event[0].GetDescription(), `\n`) {
 					fmt.Fprintf(f, "  %s\n", strings.Replace(line, `\,`, ",", -1)) //remove escape from commas (a CSV thing)
@@ -147,6 +147,78 @@ func main() {
 
 }
 
-func dups( dup string) string {
-	return ("Duplicate processing not implemented yet")
+/*  make this parallel later
+
+type Duplicates struct {
+	inputChan chan string
+	outputChan chan map[string] bool
+}
+*/
+
+func dups(dupname string) map[string]bool {
+	// Basic state machine to find ORGID in ICALCONTENTS drawer.  It
+	// accepts org-mode full syntax, but takes lots of shortcuts to combine
+	// and ignore many irrelevant fields.  It will tolerate incorrect syntax,
+	// although it might not get recognition right.
+
+	// It uses a state machine that processes one line at a time.
+	//
+	// States are:
+	//    Body - somewhere in body.  Only a headline will depart this state
+	//    Head - somewhere in headline material.  Looking for drawers.
+	//    Drawer - in a drawer that is not ICALCONTENTS.  Loofing for end.
+	//    Contents - in the ICALCONTENTS drawer, looking for ORGID
+	//
+	const Body = 1
+	const Head = 2
+	const Drawer = 3
+	const Contents = 4
+	state := Body // State begins in Body
+
+	// Pattern matches
+
+	rHeadline, _ := regexp.Compile(`^\*`)                  // first character is "*"
+	rBody, _ := regexp.Compile(`^[^:]*$`)                  // no colon anywhere on the line (also catches blank lines)
+	rContents, _ := regexp.Compile(`^\s*:ICALCONTENTS:`)    //start of content drawer
+	rOrgID, _ := regexp.Compile(`^\s*:ORGUID:\s*(\S*)\s*$`) // the orgID
+	rOther, _ := regexp.Compile(`^\s*:\S*:`)               // start of another drawer
+	rEnd, _ := regexp.Compile(`^\s*:END:`)                 // end of any drawer
+
+	found := make(map[string]bool)
+
+	// read lines until the end
+	dupfile, err := os.Open(dupname)
+	if err != nil {
+		if os.IsNotExist( err) {
+			return( found)
+		} else {
+			log.Fatal(err)
+		}
+	}
+	defer dupfile.Close()
+	scanner := bufio.NewScanner(dupfile)
+	for scanner.Scan() {
+		line := scanner.Text()
+		switch {
+		case err != nil:
+		case rHeadline.MatchString(line):
+			state = Head
+		case rBody.MatchString(line):
+			state = Body
+		case state == Body:
+			// break.  Rest only apply if in header
+		case state == Head && rContents.MatchString(line):
+			state = Contents
+		case state == Contents && rOrgID.MatchString(line):
+			// extract UID add to map
+			found[rOrgID.FindStringSubmatch(line)[1]] = true // extract the word after :ORGID:
+		case state == Head && rOther.MatchString(line):
+			state = Drawer
+		case state == Drawer && rEnd.MatchString(line):
+			state = Head
+		case state == Contents && rEnd.MatchString(line):
+			state = Head
+		}
+	}
+	return (found)
 }

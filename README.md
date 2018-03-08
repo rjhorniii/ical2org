@@ -51,7 +51,9 @@ Example output:
 ```
 
 
-*future* If the duplicates option is present and provides a file, that
+### Duplicates Management
+
+If the duplicates option is present and provides a file, that
 file contains events that are already in org format.  Duplicates of
 these events should not be generated as output.  The duplicates file
 is scanned for ORGUIDs inside an ICALCONTENTS drawer.  When the input
@@ -60,14 +62,18 @@ ORGUIDs.  Events with matching ORGUIDs are not output.
 
 The matching rule permits you to decide whether modified events are
 treated as duplicates or not.  If you remove the ORGUID from the
-drawer, a modified event will be treated as different.  ical2org does
-not attempt to match on event contents.  It only looks at the ORGUIDs.
+drawer, a modified event will be treated as different, and a new org
+headline generated.
 
-This means that by default you can change task status to DONE, etc.,
-and that modified event will be considered a duplicate.  This way you
-need not ensure that all Ical sources are updated.  It is usually safe
-to re-convert old email attachments and calendars that show historical
-events.
+ical2org does not compare event contents.  It only looks at the
+ORGUIDs.
+
+This means that by you can change task status to DONE, etc., and the
+modified event will still be considered a duplicate.  This way you
+need not ensure that all Ical sources are also updated when you change
+the org file.  This should allow repeated conversion of old email
+attachments and calendars that show historical events.  New events
+will not be created in the org file.
 
 The duplicates file can also be an orgmode file that is being manually
 mainatined. In the manually maintained org drawer you list the ORGUIDs
@@ -82,12 +88,12 @@ that should be considered duplicate:
   :END:
 ```
 
-This permits a construction like:
+The duplicates processing permits a construction like:
 
-`ical2org -d=events.org https://calendar.google.com/more-stuff  >>events.org`
+```ical2org -d=events.org -a=events.org https://calendar.google.com/more-stuff```
 
-to be run regularly, even hourly, without filling the events.org
-file with duplicates.  The internal logic waits for duplicate
+to be run regularly, even hourly, without filling the `events.org`
+file with duplicates.  The internal logic waits for duplicates file
 processing to complete before it begins event generation, so it is
 safe to have the output file and duplicates file be the same file.
 
