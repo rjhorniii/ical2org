@@ -4,7 +4,9 @@ Convert a calendar in ICal format (e.g., .ics) into org-mode structure.
 
 Usage: `ical2org [-d=<duplicates>] [-o=output] [-a=append]
        [--inactive] [--active]
-       [--deadline] [--scheduled] input files`
+       [--deadline] [--scheduled]
+       [--repeats]
+       input files`
 
 The input files can be either URLs ("http://....") or local files.
 
@@ -100,3 +102,45 @@ safe to have the output file and duplicates file be the same file.
 ical2org depends upon the forked library in
 https://github.com/rjhorniii/ics-golang.  Switch to the ical2org
 branch.
+
+### Repeating events
+
+There are good reasons to convert a repeating event into a single org
+headline, and good reasons to replicate the repeating event as
+multiple separate headlines.  The flag ```repeats``` is used to
+control this.  If missing, or present with ```repeats=true``` multiple
+org headlines will be generated.  If ```repeasts=false```, only one
+headline will be generated.  In either case, the ```ICALCONTENTS```
+will contain the repeat rule, e.g., ```:RRULE:
+FREQ=WEEKLY;UNTIL=20180325T035959Z;BYDAY=SA```.
+
+The ORGUID will be the same for all of the headlines.  This enables
+later efforts to find them if the repeating events need to be modified
+or rescheduled.
+
+### Time Zones
+
+Org-mode does not use time zone tagged timestamps.  There are a
+variety of good reasons for this.  As soon as you deal with
+significant travel and teleconferences that originate in various parts
+of the world you hit complex edge conditions.  The person involved can
+establish the right thing to do fairly easily.  I've found no software
+calendar that handles this properly.  For example, if I plan to be in
+New York on Monday and Tuesday, Chicago on Wednesday, and Berlin on
+Thursday and Friday, what timezone should be attached to which events?
+I personally use the rule: local time there and then.  So I want
+Monday and Tuesday to be America/NewYork, Wednesday to be
+America/Chicago, and Thursday/Friday to be Europe/Berlin.  Note that I
+did not use UTC offsets.  I want the times to be then local time.  I
+don't want to worry about whether at that time and location it is
+summer time or not.  I find org agendas are most useful this way, even
+though different days and events are different time zones.
+
+Therefore, this program converts everything assuming that the event
+creator local time zone is the one that matches my rule of "then/there
+time".  This is not always correct.  It is especially a problem for
+teleconferences across time zones.  In the property ```TZIDS``` are the
+creator specified time zone(s) for the event.  This allows a human to
+know what was sent.  I then assume that between the description, the
+zones, and the times, a person can decide whether and how to adjust
+the active timestamps in the org file.

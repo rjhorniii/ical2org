@@ -17,6 +17,7 @@ func main() {
 	var sched bool
 	var active bool
 	var inactive bool
+	var repeats bool
 
 	// define flags
 	dupsPtr := flag.String("d", "", "Filename for duplicate removal")
@@ -26,6 +27,7 @@ func main() {
 	flag.BoolVar(&dead, "deadline", false, "Event time should be scheduled")
 	flag.BoolVar(&active, "active", true, "Event time should be scheduled")
 	flag.BoolVar(&inactive, "inactive", false, "Event time should be scheduled")
+	flag.BoolVar(&repeats, "repeats", true, "Generate an event per repeat")
 
 	// parse flags and arguments
 	flag.Parse()
@@ -39,6 +41,8 @@ func main() {
 		fmt.Println("can't have both output and append files")
 		os.Exit(1)
 	}
+	ics.RepeatRuleApply = repeats
+
 	// Collect duplicate IDs before parsing inputs
 
 	dupIDs := map[string]bool{"": true}
@@ -63,6 +67,7 @@ func main() {
 	// get all calendars in this parser
 	cal, err := parser.GetCalendars()
 
+
 	//  check for errors
 	if err == nil {
 		// set output file when there are events
@@ -82,10 +87,10 @@ func main() {
 		}
 
 		for _, calendar := range cal {
-			allEvents := calendar.GetEventsByDates()
+			allEvents := calendar.GetEvents()
 			for _, event := range allEvents {
 				// eliminate duplicates
-				if dupIDs[event[0].GetID()] {
+				if dupIDs[event.GetID()] {
 					continue
 				}
 				// print the event
@@ -98,45 +103,46 @@ func main() {
 					format = "* %s <%s>\n"
 				}
 
-				fmt.Fprintf(f, format, strings.Replace(event[0].GetSummary(), `\,`, ",", -1), event[0].GetStart().Format("2006-01-02 15:04"))
+				fmt.Fprintf(f, format, strings.Replace(event.GetSummary(), `\,`, ",", -1), event.GetStart().Format("2006-01-02 15:04"))
 				// Scheduled, Deadline, or nothing depending upon switches
 				switch {
 				case dead:
-					fmt.Fprintf(f, "    DEADLINE: <%s-%s>\n", event[0].GetStart().Format("2006-01-02 15:04"), event[0].GetEnd().Format("15:04"))
+					fmt.Fprintf(f, "    DEADLINE: <%s-%s>\n", event.GetStart().Format("2006-01-02 15:04"), event.GetEnd().Format("15:04"))
 				case sched:
-					fmt.Fprintf(f, "    SCHEDULED: <%s-%s>\n", event[0].GetStart().Format("2006-01-02 15:04"), event[0].GetEnd().Format("15:04"))
+					fmt.Fprintf(f, "    SCHEDULED: <%s-%s>\n", event.GetStart().Format("2006-01-02 15:04"), event.GetEnd().Format("15:04"))
 				default:
 				}
 				// Print drawer contents
 				fmt.Fprintln(f, "  :ICALCONTENTS:")
-				fmt.Fprintf(f, "  :ORGUID: %s\n", event[0].GetID())
-				fmt.Fprintf(f, "  :ORIGINAL-UID: %s\n", event[0].GetImportedID())
-				fmt.Fprintf(f, "  :DTSTART: %s\n", event[0].GetStart().Format("2006-01-02 15:04"))
-				fmt.Fprintf(f, "  :DTEND: %s\n", event[0].GetEnd().Format("2006-01-02 15:04"))
-				fmt.Fprintf(f, "  :DTSTAMP: %s\n", event[0].GetDTStamp().Format("2006-01-02 15:04"))
-				for _, attendee := range event[0].GetAttendees() {
+				fmt.Fprintf(f, "  :ORGUID: %s\n", event.GetID())
+				fmt.Fprintf(f, "  :ORIGINAL-UID: %s\n", event.GetImportedID())
+				fmt.Fprintf(f, "  :DTSTART: %s\n", event.GetStart().Format("2006-01-02 15:04"))
+				fmt.Fprintf(f, "  :DTEND: %s\n", event.GetEnd().Format("2006-01-02 15:04"))
+				fmt.Fprintf(f, "  :DTSTAMP: %s\n", event.GetDTStamp().Format("2006-01-02 15:04"))
+				for _, attendee := range event.GetAttendees() {
 					fmt.Fprintf(f, "  :ATTENDEE: %v\n", attendee)
 				}
-				fmt.Fprintf(f, "  :ORGANIZER: %s\n", event[0].GetOrganizer())
-				if event[0].GetGeo() != nil {
-					fmt.Fprintf(f, "  :GEO: %v, \n", event[0].GetGeo())
+				fmt.Fprintf(f, "  :ORGANIZER: %s\n", event.GetOrganizer())
+				if event.GetGeo() != nil {
+					fmt.Fprintf(f, "  :GEO: %v, \n", event.GetGeo())
 				}
 				tzids := ""
-				for _, tz := range event[0].GetDTZID() {
+				for _, tz := range event.GetDTZID() {
 					if !strings.Contains(tzids, tz) {
 						tzids = tzids + tz
 					}
 				}
 				fmt.Fprintf(f, "  :TZIDS: %s\n", tzids)
+				fmt.Fprintf(f, "  :RRULE: %s\n", event.GetRRule())
 				fmt.Fprintln(f, "  :END:")
 				// Print Description and location
 
 				fmt.Fprintln(f, "** Description\n")
-				for _, line := range strings.Split(event[0].GetDescription(), `\n`) {
+				for _, line := range strings.Split(event.GetDescription(), `\n`) {
 					fmt.Fprintf(f, "  %s\n", strings.Replace(line, `\,`, ",", -1)) //remove escape from commas (a CSV thing)
 				}
-				if event[0].GetLocation() != "" {
-					fmt.Fprintf(f, "** Location %s \n", event[0].GetLocation())
+				if event.GetLocation() != "" {
+					fmt.Fprintf(f, "** Location %s \n", event.GetLocation())
 				}
 			}
 		}
