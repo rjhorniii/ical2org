@@ -13,14 +13,15 @@ import (
 
 func main() {
 
-	var dead bool
+	var dupflag bool
 	var sched bool
 	var active bool
 	var inactive bool
 	var repeats bool
+	var dead bool
 
 	// define flags
-	dupsPtr := flag.String("d", "", "Filename for duplicate removal")
+	dupfile := flag.String( "d", "", "Filename for duplicate removal")
 	appPtr := flag.String("a", "", "Filename to append new events")
 	outPtr := flag.String("o", "", "Filename for event output, default stdout")
 	flag.BoolVar(&sched, "scheduled", false, "Event time should be scheduled")
@@ -28,6 +29,7 @@ func main() {
 	flag.BoolVar(&active, "active", true, "Event time should be scheduled")
 	flag.BoolVar(&inactive, "inactive", false, "Event time should be scheduled")
 	flag.BoolVar(&repeats, "repeats", true, "Generate an event per repeat")
+	flag.BoolVar(&dupflag, "dupinput", false, "Do not generate duplicates from input")
 
 	// parse flags and arguments
 	flag.Parse()
@@ -46,10 +48,11 @@ func main() {
 	// Collect duplicate IDs before parsing inputs
 
 	dupIDs := map[string]bool{"": true}
-	if *dupsPtr != "" {
-		dupIDs = dups(*dupsPtr)
+	if *dupfile != "" {
+		dupIDs = dups(*dupfile)
+		dupflag = true
 	}
-
+	
 	//  create new parser
 	parser := ics.New()
 

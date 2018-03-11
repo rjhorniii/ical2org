@@ -5,7 +5,7 @@ Convert a calendar in ICal format (e.g., .ics) into org-mode structure.
 Usage: `ical2org [-d=<duplicates>] [-o=output] [-a=append]
        [--inactive] [--active]
        [--deadline] [--scheduled]
-       [--repeats]
+       [--repeats] [-dupinput]
        input files`
 
 The input files can be either URLs ("http://....") or local files.
@@ -104,6 +104,11 @@ file with duplicates.  The internal logic waits for duplicates file
 processing to complete before it begins event generation, so it is
 safe to have the output file and duplicates file be the same file.
 
+The duplicates option also eliminates duplicates that may occur in the
+inputs, so that if the same event is in multiple sources only one
+event will be generated.  The ```dupinput``` flag can be used to
+eliminate duplicates in the input files in situations where a
+duplicates file is not used.
 
 ### Repeating events
 
