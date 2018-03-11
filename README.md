@@ -52,32 +52,37 @@ Example output:
 
 ```
 
+### Dependencies
+
+ical2org depends upon the forked library in
+https://github.com/rjhorniii/ics-golang.  When the fork/pull request
+are processed this will be changed.
 
 ### Duplicates Management
 
-If the duplicates option is present and provides a file, that
-file contains events that are already in org format.  Duplicates of
-these events should not be generated as output.  The duplicates file
-is scanned for ORGUIDs inside an ICALCONTENTS drawer.  When the input
-files are processed the generated event ORGUIDs are compared with these
-ORGUIDs.  Events with matching ORGUIDs are not output.
+If the duplicates option is present and provides a file, that file
+contains events that are already in org format.  Duplicates of these
+events will not be generated as output.  The duplicates file is
+scanned for ORGUIDs inside an ICALCONTENTS drawer.  When the input
+files are processed, their event ORGUIDs are compared with the
+ORGUIDs from the duplicates file.  Input events with matching ORGUIDs are
+not output.
 
-The matching rule permits you to decide whether modified events are
+This matching rule permits you to decide whether modified events are
 treated as duplicates or not.  If you remove the ORGUID from the
 drawer, a modified event will be treated as different, and a new org
-headline generated.
-
-ical2org does not compare event contents.  It only looks at the
-ORGUIDs.
+headline generated when that Ical event is processed again.  If the
+ORGUID matches, no matter what other changes are made, a new org
+headline will not be generated.
 
 This means that by you can change task status to DONE, etc., and the
-modified event will still be considered a duplicate.  This way you
-need not ensure that all Ical sources are also updated when you change
-the org file.  This should allow repeated conversion of old email
-attachments and calendars that show historical events.  New events
-will not be created in the org file.
+modified event will still be considered a duplicate.  You need not
+ensure that all Ical sources are also updated when you change the org
+file.  This allows later conversion of old email attachments
+and calendars that contain historical events.  New events will not be
+created in the org file for those duplicates.
 
-The duplicates file can also be an orgmode file that is being manually
+The duplicates file can also be an orgmode file that is manually
 mainatined. In the manually maintained org drawer you list the ORGUIDs
 that should be considered duplicate:
 
@@ -99,9 +104,6 @@ file with duplicates.  The internal logic waits for duplicates file
 processing to complete before it begins event generation, so it is
 safe to have the output file and duplicates file be the same file.
 
-ical2org depends upon the forked library in
-https://github.com/rjhorniii/ics-golang.  Switch to the ical2org
-branch.
 
 ### Repeating events
 
@@ -109,7 +111,7 @@ There are good reasons to convert a repeating event into a single org
 headline, and good reasons to replicate the repeating event as
 multiple separate headlines.  The flag ```repeats``` is used to
 control this.  If missing, or present with ```repeats=true``` multiple
-org headlines will be generated.  If ```repeasts=false```, only one
+org headlines will be generated.  If ```repeats=false```, only one
 headline will be generated.  In either case, the ```ICALCONTENTS```
 will contain the repeat rule, e.g., ```:RRULE:
 FREQ=WEEKLY;UNTIL=20180325T035959Z;BYDAY=SA```.
@@ -136,11 +138,57 @@ don't want to worry about whether at that time and location it is
 summer time or not.  I find org agendas are most useful this way, even
 though different days and events are different time zones.
 
-Therefore, this program converts everything assuming that the event
-creator local time zone is the one that matches my rule of "then/there
-time".  This is not always correct.  It is especially a problem for
-teleconferences across time zones.  In the property ```TZIDS``` are the
-creator specified time zone(s) for the event.  This allows a human to
-know what was sent.  I then assume that between the description, the
-zones, and the times, a person can decide whether and how to adjust
-the active timestamps in the org file.
+This program converts everything assuming that the event creator local
+time zone is the one that matches my rule of "then/there time".  This
+is most often, but not always, correct.  It is especially a problem for
+teleconferences across time zones.  In the property ```TZIDS``` are
+the creator specified time zone(s) for the event.  This allows a human
+to know what was sent.  I then assume that between the description,
+the zones, and the times, a person can decide whether and how to
+adjust the timestamps in the org file.
+
+### Systemd example
+
+The following files specify using `ical2org` to fetch a calendar from
+Google and update `events.org` at specified times.
+
+Google-fetch.sh
+```
+#!/bin/bash
+cd ~/org-directory
+export https_proxy=https://192.168.1.1:8000
+/home/rjhorniii/bin/ical2org -d=events-g.org -a=events-g.org https://calendar.google.com/google-stuff
+```
+
+google-fetch.service
+```
+[Unit]
+Description=Fetch events from my google calendar into events-g.org
+
+[Service]
+Type=oneshot
+ExecStart=/home/rjhorniii/org-directory/google-fetch.sh
+```
+
+google-fetch.timer, this example shows an irregular polling interval
+```
+[Unit]
+Description=Fetch events timer
+
+[Timer]
+OnCalendar=*-*-* 6,8,10,12,13,14,16,18,23:10
+Unit=google-fetch.service
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+```
+
+Put the `service` and `timer` in `~/.config/systemd/user`. To run it immediately
+and then at the usual schedule use the commands:
+
+```
+systemctl --user daemon-reload
+systemctl --user start google-fetch.timer
+systemctl --user enable google-fetch.timer
+```
