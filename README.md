@@ -8,7 +8,7 @@ Usage: `ical2org [-d=<duplicates>] [-o=output] [-a=append]
        [--repeats] [-dupinput]
        input files`
 
-The input files can be either URLs ("http://....") or local files.
+The input files can be URLs ("http://...."), local files, or stdin.  If the filename given is "-" then stdin is read.
 
 The resulting org formatted events will either
 * replace the file specified with -o output,
