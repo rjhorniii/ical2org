@@ -5,7 +5,7 @@ Convert a calendar in ICal format (e.g., .ics) into org-mode structure.
 Usage: `ical2org [-d=<duplicates>] [-o=output] [-a=append]
        [--inactive] [--active]
        [--deadline] [--scheduled]
-       [--repeats] [-dupinput]
+       [--repeats] [-dupinput] [-count]
        input files`
 
 The input files can be URLs ("http://...."), local files, or stdin.  If the filename given is "-" then stdin is read.
@@ -197,3 +197,27 @@ systemctl --user daemon-reload
 systemctl --user start google-fetch.timer
 systemctl --user enable google-fetch.timer
 ```
+
+### Mu4e integration
+
+The following additions to your `.emacs` simplifies extracting schedule
+from email.  In the email view, the keystrokes `A`,`s` will start
+processing and ask for the attachment number to process.  The result
+will be a buffer indicating the number of events captured.
+
+```
+;; define a pipe to parse appointments from mu4e
+
+(defun process-ical-appointments (msg attachnum)
+  "schedule appointments onto /home/rjhorniii/org/events-g.org"
+  (mu4e-view-pipe-attachment msg attachnum
+  	"/home/rjhorniii/bin/ical2org -count -d=/home/rjhorniii/org/events-g.org -a=/home/rjhorniii/org/events-g.org -"))
+;; define 's' as the shortcut
+(add-to-list 'mu4e-view-attachment-actions '("schedule appointment" . process-ical-appointments) t)
+```
+
+The `-count` indicates that the generated event count be sent to
+stdout.  The file `events-g.org` will be updated. The use of `-`
+indicates that input will be on stdin.  Mu4e deals with extracting the
+attachment and sending it to the indicated command, and taking the
+output and showing it as an emacs buffer.

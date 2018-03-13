@@ -19,17 +19,19 @@ func main() {
 	var inactive bool
 	var repeats bool
 	var dead bool
+	var count bool
 
 	// define flags
 	dupfile := flag.String( "d", "", "Filename for duplicate removal")
 	appPtr := flag.String("a", "", "Filename to append new events")
 	outPtr := flag.String("o", "", "Filename for event output, default stdout")
 	flag.BoolVar(&sched, "scheduled", false, "Event time should be scheduled")
-	flag.BoolVar(&dead, "deadline", false, "Event time should be scheduled")
-	flag.BoolVar(&active, "active", true, "Event time should be scheduled")
-	flag.BoolVar(&inactive, "inactive", false, "Event time should be scheduled")
+	flag.BoolVar(&dead, "deadline", false, "Event time should be deadline")
+	flag.BoolVar(&active, "active", true, "Headline timestamp should be active")
+	flag.BoolVar(&inactive, "inactive", false, "Headline timestamp should be inactive")
 	flag.BoolVar(&repeats, "repeats", true, "Generate an event per repeat")
 	flag.BoolVar(&dupflag, "dupinput", false, "Do not generate duplicates from input")
+	flag.BoolVar(&count, "count", false, "Report number of new events found on stdout")
 
 	// parse flags and arguments
 	flag.Parse()
@@ -69,7 +71,7 @@ func main() {
 
 	// get all calendars in this parser
 	cal, err := parser.GetCalendars()
-
+	eventsSaved := 0
 
 	//  check for errors
 	if err == nil {
@@ -96,6 +98,7 @@ func main() {
 				if dupIDs[event.GetID()] {
 					continue
 				}
+				eventsSaved++
 				// print the event
 				// choose active or inactive timestamp
 				format := "* %s <%s>\n"
@@ -148,6 +151,9 @@ func main() {
 					fmt.Fprintf(f, "** Location %s \n", event.GetLocation())
 				}
 			}
+		}
+		if( count) {
+			fmt.Fprintf(os.Stdout, " New events written: %d\n", eventsSaved)
 		}
 	} else {
 		// error
