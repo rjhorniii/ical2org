@@ -22,7 +22,7 @@ func main() {
 	var count bool
 
 	// define flags
-	dupfile := flag.String( "d", "", "Filename for duplicate removal")
+	dupfile := flag.String("d", "", "Filename for duplicate removal")
 	appPtr := flag.String("a", "", "Filename to append new events")
 	outPtr := flag.String("o", "", "Filename for event output, default stdout")
 	flag.BoolVar(&sched, "scheduled", false, "Event time should be scheduled")
@@ -37,7 +37,7 @@ func main() {
 	flag.Parse()
 
 	if len(flag.Args()) == 0 {
-		fmt.Println("At least one input argument is required.\n")
+		fmt.Println("At least one input argument is required.")
 		return
 	}
 
@@ -54,7 +54,7 @@ func main() {
 		dupIDs = dups(*dupfile)
 		dupflag = true
 	}
-	
+
 	//  create new parser
 	parser := ics.New()
 
@@ -143,7 +143,7 @@ func main() {
 				fmt.Fprintln(f, "  :END:")
 				// Print Description and location
 
-				fmt.Fprintln(f, "** Description\n")
+				fmt.Fprintf(f, "** Description\n\n")
 				for _, line := range strings.Split(event.GetDescription(), `\n`) {
 					fmt.Fprintf(f, "  %s\n", strings.Replace(line, `\,`, ",", -1)) //remove escape from commas (a CSV thing)
 				}
@@ -152,7 +152,7 @@ func main() {
 				}
 			}
 		}
-		if( count) {
+		if count {
 			fmt.Fprintf(os.Stdout, " New events written: %d\n", eventsSaved)
 		}
 	} else {
@@ -192,20 +192,20 @@ func dups(dupname string) map[string]bool {
 
 	// Pattern matches
 
-	rHeadline, _ := regexp.Compile(`^\*`)                  // first character is "*"
-	rBody, _ := regexp.Compile(`^[^:]*$`)                  // no colon anywhere on the line (also catches blank lines)
+	rHeadline, _ := regexp.Compile(`^\*`)                   // first character is "*"
+	rBody, _ := regexp.Compile(`^[^:]*$`)                   // no colon anywhere on the line (also catches blank lines)
 	rContents, _ := regexp.Compile(`^\s*:ICALCONTENTS:`)    //start of content drawer
 	rOrgID, _ := regexp.Compile(`^\s*:ORGUID:\s*(\S*)\s*$`) // the orgID
-	rOther, _ := regexp.Compile(`^\s*:\S*:`)               // start of another drawer
-	rEnd, _ := regexp.Compile(`^\s*:END:`)                 // end of any drawer
+	rOther, _ := regexp.Compile(`^\s*:\S*:`)                // start of another drawer
+	rEnd, _ := regexp.Compile(`^\s*:END:`)                  // end of any drawer
 
 	found := make(map[string]bool)
 
 	// read lines until the end
 	dupfile, err := os.Open(dupname)
 	if err != nil {
-		if os.IsNotExist( err) {
-			return( found)
+		if os.IsNotExist(err) {
+			return (found)
 		} else {
 			log.Fatal(err)
 		}
