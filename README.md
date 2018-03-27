@@ -52,6 +52,19 @@ Example output:
 
 ```
 
+### Installation
+
+To install this package make sure that you have the go toolchain installed https://golang.org/doc/code.html.
+Then use the commands
+
+```sh
+go get github.com/rjhorniii/ical2org-go
+go install github.com/rjhorniii/ical2org-go
+```
+
+to download, build, and install the `ical2org-go`.
+You can use `which ical2org-go` to find the location of the binary on your `$PATH`.
+
 ### Dependencies
 
 ical2org depends upon the forked library in
