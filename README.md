@@ -1,4 +1,4 @@
-# ical2org-go
+# ical2org  (used to be ical2org-go)
 Convert a calendar in ICal format (e.g., .ics) into org-mode structure.
 
 
@@ -58,12 +58,12 @@ To install this package make sure that you have the go toolchain installed https
 Then use the commands
 
 ```sh
-go get github.com/rjhorniii/ical2org-go
-go install github.com/rjhorniii/ical2org-go
+go get github.com/rjhorniii/ical2org
+go install github.com/rjhorniii/ical2org
 ```
 
-to download, build, and install the `ical2org-go`.
-You can use `which ical2org-go` to find the location of the binary on your `$PATH`.
+to download, build, and install the `ical2org`.
+You can use `which ical2org` to find the location of the binary on your `$PATH`.
 
 ### Dependencies
 
