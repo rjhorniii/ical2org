@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"github.com/rjhorniii/ics-golang"
 	//	"github.com/davecgh/go-spew/spew"
+	"testing"
 )
 
-func test_main() {
+func TestMain(t *testing.T) {
 
 	//  create new parser
 	parser := ics.New()
@@ -15,7 +16,7 @@ func test_main() {
 	inputChan := parser.GetInputChan()
 
 	//  send a local ics file
-	inputChan <- "data/xx03614.ics"
+	inputChan <- "tests/xx91596.ics"
 
 	//  wait for the calendar to be parsed
 	parser.Wait()
@@ -38,7 +39,7 @@ func test_main() {
 		}
 	} else {
 		// error
-		fmt.Println(err)
+		t.Fatal(err)
 	}
 
 }
