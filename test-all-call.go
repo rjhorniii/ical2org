@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/PuloV/ics-golang"
+	"github.com/rjhorniii/ics-golang"
 	//	"github.com/davecgh/go-spew/spew"
 )
 
-func main() {
+func test_main() {
 
 	//  create new parser
 	parser := ics.New()
