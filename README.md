@@ -65,6 +65,19 @@ go install github.com/rjhorniii/ical2org
 to download, build, and install the `ical2org`.
 You can use `which ical2org` to find the location of the binary on your `$PATH`.
 
+To run the tests you can go to the project root directory and run
+
+```
+go test
+```
+
+Which will produce output like:
+
+```
+PASS
+ok  	github.com/rjhorniii/ical2org	0.019s
+```
+
 ### Dependencies
 
 ical2org depends upon the forked library in
