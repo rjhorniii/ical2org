@@ -45,7 +45,7 @@ func main() {
 			d, err := time.ParseDuration(*afterPtr)
 			if err != nil {
 				fmt.Printf("After option, duration format error %s\n", err)
-				after = false
+				return
 			} else {
 				afterTime = afterTime.Add(d)
 				after = true
@@ -54,7 +54,7 @@ func main() {
 			t, err := time.Parse("2006-01-02", *afterPtr)
 			if err != nil {
 				fmt.Printf("After option, time format error %s\n", err)
-				after = false
+				return
 			} else {
 				afterTime = t
 				after = true
