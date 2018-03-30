@@ -27,7 +27,7 @@ func main() {
 	dupfile := flag.String("d", "", "Filename for duplicate removal")
 	appPtr := flag.String("a", "", "Filename to append new events")
 	outPtr := flag.String("o", "", "Filename for event output, default stdout")
-	afterPtr := flag.String("after", "", "Only use events after this date")
+	afterPtr := flag.String("after", "", "Only use events at and after this date")
 	flag.BoolVar(&sched, "scheduled", false, "Event time should be scheduled")
 	flag.BoolVar(&dead, "deadline", false, "Event time should be deadline")
 	flag.BoolVar(&active, "active", true, "Headline timestamp should be active")
