@@ -9,6 +9,7 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"time"
 )
 
 func main() {
@@ -20,11 +21,13 @@ func main() {
 	var repeats bool
 	var dead bool
 	var count bool
+	var after bool
 
 	// define flags
 	dupfile := flag.String("d", "", "Filename for duplicate removal")
 	appPtr := flag.String("a", "", "Filename to append new events")
 	outPtr := flag.String("o", "", "Filename for event output, default stdout")
+	afterPtr := flag.String("after", "", "Only use events after this date")
 	flag.BoolVar(&sched, "scheduled", false, "Event time should be scheduled")
 	flag.BoolVar(&dead, "deadline", false, "Event time should be deadline")
 	flag.BoolVar(&active, "active", true, "Headline timestamp should be active")
@@ -36,6 +39,30 @@ func main() {
 	// parse flags and arguments
 	flag.Parse()
 
+	afterTime := time.Now()
+	if *afterPtr != "" {
+		if strings.HasPrefix(*afterPtr, "-") {
+			d, err := time.ParseDuration(*afterPtr)
+			if err != nil {
+				fmt.Printf("After option, duration format error %s\n", err)
+				after = false
+			} else {
+				afterTime = afterTime.Add(d)
+				after = true
+			}
+		} else {
+			t, err := time.Parse("2006-01-02", *afterPtr)
+			if err != nil {
+				fmt.Printf("After option, time format error %s\n", err)
+				after = false
+			} else {
+				afterTime = t
+				after = true
+			}
+		}
+	}
+
+	// Verify that input and output are present
 	if len(flag.Args()) == 0 {
 		fmt.Println("At least one input argument is required.")
 		return
@@ -97,6 +124,12 @@ func main() {
 				// eliminate duplicates
 				if dupIDs[event.GetID()] {
 					continue
+				}
+				// eliminate events before after
+				if after {
+					if event.GetStart().Before(afterTime) {
+						continue
+					}
 				}
 				eventsSaved++
 				// print the event
