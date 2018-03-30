@@ -5,7 +5,7 @@ Convert a calendar in ICal format (e.g., .ics) into org-mode structure.
 Usage: `ical2org [-d=<duplicates>] [-o=output] [-a=append]
        [--inactive] [--active]
        [--deadline] [--scheduled]
-       [--repeats] [-dupinput] [-count]
+       [--repeats] [-dupinput] [-count] [-after duration | date]
        input files`
 
 The input files can be URLs ("http://...."), local files, or stdin.  If the filename given is "-" then stdin is read.
@@ -141,7 +141,7 @@ duplicates file is not used.
 There are good reasons to convert a repeating event into a single org
 headline, and good reasons to replicate the repeating event as
 multiple separate headlines.  The flag ```repeats``` is used to
-control this.  If missing, or present with ```repeats=true``` multiple
+control this.  If missing or present with ```repeats=true```, multiple
 org headlines will be generated.  If ```repeats=false```, only one
 headline will be generated.  In either case, the ```ICALCONTENTS```
 will contain the repeat rule, e.g., ```:RRULE:
@@ -178,10 +178,31 @@ to know what was sent.  I then assume that between the description,
 the zones, and the times, a person can decide whether and how to
 adjust the timestamps in the org file.
 
+### After option
+
+The after option specifies that only events after a particular time
+should be converted.  The variations in calendar software that
+generate Ical events, human error, time zones, and summer time can
+make this a bit unpredictable.  The effort to use "then/there local
+time" also makes it a bit unpredictable.  For example, person in New
+Zealand may occasionally receive future events that originate in the
+Americas that appear to be scheduled in the past.  It is a good idea
+to keep this cutoff at least a few days in the past.
+
+There are two forms permitted:
+
+`-after -96h` specifies a duration before now, the time the program is
+run.  This must be specified in hours.
+
+`-after 2017-12-31` specifies the midnight beginning the first day
+that will generate events.  This must be in yyyy-mm-dd notation.  If
+the intention had been to only get events in 2018, the option should
+have been `-after 2018-01-01`.
+
 ### Systemd example
 
 The following files specify using `ical2org` to fetch a calendar from
-Google and update `events.org` at specified times.
+Google and update `events-g.org` at specified times.
 
 Google-fetch.sh
 ```
