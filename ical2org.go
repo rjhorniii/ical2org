@@ -12,37 +12,62 @@ import (
 	"time"
 )
 
+
+	type args struct {
+		dupfile string
+		appfile string
+		outfile string
+		afterfile string
+		dupflag bool
+		sched bool
+		active bool
+		inactive bool
+		repeats bool
+		dead bool
+		count bool
+		after bool
+	}
+
 func main() {
 
-	var dupflag bool
-	var sched bool
-	var active bool
-	var inactive bool
-	var repeats bool
-	var dead bool
-	var count bool
-	var after bool
+	var a args
+	var dupfilePtr *string
+	var appPtr *string
+	var outPtr *string
+	var afterPtr *string
 
 	// define flags
-	dupfile := flag.String("d", "", "Filename for duplicate removal")
-	appPtr := flag.String("a", "", "Filename to append new events")
-	outPtr := flag.String("o", "", "Filename for event output, default stdout")
-	afterPtr := flag.String("after", "", "Only use events at and after this date")
-	flag.BoolVar(&sched, "scheduled", false, "Event time should be scheduled")
-	flag.BoolVar(&dead, "deadline", false, "Event time should be deadline")
-	flag.BoolVar(&active, "active", true, "Headline timestamp should be active")
-	flag.BoolVar(&inactive, "inactive", false, "Headline timestamp should be inactive")
-	flag.BoolVar(&repeats, "repeats", true, "Generate an event per repeat")
-	flag.BoolVar(&dupflag, "dupinput", false, "Do not generate duplicates from input")
-	flag.BoolVar(&count, "count", false, "Report number of new events found on stdout")
+	dupfilePtr = flag.String("d", "", "Filename for duplicate removal")
+	appPtr = flag.String("a", "", "Filename to append new events")
+	outPtr = flag.String("o", "", "Filename for event output, default stdout")
+	afterPtr = flag.String("after", "", "Only use events at and after this date")
+	flag.BoolVar(&a.sched, "scheduled", false, "Event time should be scheduled")
+	flag.BoolVar(&a.dead, "deadline", false, "Event time should be deadline")
+	flag.BoolVar(&a.active, "active", true, "Headline timestamp should be active")
+	flag.BoolVar(&a.inactive, "inactive", false, "Headline timestamp should be inactive")
+	flag.BoolVar(&a.repeats, "repeats", true, "Generate an event per repeat")
+	flag.BoolVar(&a.dupflag, "dupinput", false, "Do not generate duplicates from input")
+	flag.BoolVar(&a.count, "count", false, "Report number of new events found on stdout")
 
 	// parse flags and arguments
 	flag.Parse()
 
+	a.dupfile = *dupfilePtr
+	a.appfile = *appPtr
+	a.outfile = *outPtr
+	a.afterfile = *afterPtr
+
+	process(a)
+}
+
+func process (a args) {
+
+	var after bool
+	
 	afterTime := time.Now()
-	if *afterPtr != "" {
-		if strings.HasPrefix(*afterPtr, "-") {
-			d, err := time.ParseDuration(*afterPtr)
+	if a.afterfile != "" {
+		if strings.HasPrefix(a.afterfile, "-") {
+			d, err := time.ParseDuration(a.afterfile)
 			if err != nil {
 				fmt.Printf("After option, duration format error %s\n", err)
 				return
@@ -51,7 +76,7 @@ func main() {
 				after = true
 			}
 		} else {
-			t, err := time.Parse("2006-01-02", *afterPtr)
+			t, err := time.Parse("2006-01-02", a.afterfile)
 			if err != nil {
 				fmt.Printf("After option, time format error %s\n", err)
 				return
@@ -68,18 +93,18 @@ func main() {
 		return
 	}
 
-	if *appPtr != "" && *outPtr != *outPtr {
+	if a.appfile != "" && a.outfile != "" {
 		fmt.Println("can't have both output and append files")
 		os.Exit(1)
 	}
-	ics.RepeatRuleApply = repeats
+	ics.RepeatRuleApply = a.repeats
 
 	// Collect duplicate IDs before parsing inputs
 
 	dupIDs := map[string]bool{"": true}
-	if *dupfile != "" {
-		dupIDs = dups(*dupfile)
-		dupflag = true
+	if a.dupfile != "" {
+		dupIDs = dups(a.dupfile)
+		a.dupflag = true
 	}
 
 	//  create new parser
@@ -104,13 +129,13 @@ func main() {
 	if err == nil {
 		// set output file when there are events
 		var f *os.File
-		if *outPtr != "" {
-			f, err = os.OpenFile(*outPtr, os.O_TRUNC|os.O_WRONLY|os.O_CREATE, 0600)
+		if a.outfile != "" {
+			f, err = os.OpenFile(a.outfile, os.O_TRUNC|os.O_WRONLY|os.O_CREATE, 0600)
 			if err != nil {
 				log.Fatal(err)
 			}
-		} else if *appPtr != "" {
-			f, err = os.OpenFile(*appPtr, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+		} else if a.appfile != "" {
+			f, err = os.OpenFile(a.appfile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -136,18 +161,18 @@ func main() {
 				// choose active or inactive timestamp
 				format := "* %s <%s>\n"
 				switch {
-				case inactive:
+				case a.inactive:
 					format = "* %s [%s]\n"
-				case active:
+				case a.active:
 					format = "* %s <%s>\n"
 				}
 
 				fmt.Fprintf(f, format, strings.Replace(event.GetSummary(), `\,`, ",", -1), event.GetStart().Format("2006-01-02 15:04"))
 				// Scheduled, Deadline, or nothing depending upon switches
 				switch {
-				case dead:
+				case a.dead:
 					fmt.Fprintf(f, "    DEADLINE: <%s-%s>\n", event.GetStart().Format("2006-01-02 15:04"), event.GetEnd().Format("15:04"))
-				case sched:
+				case a.sched:
 					fmt.Fprintf(f, "    SCHEDULED: <%s-%s>\n", event.GetStart().Format("2006-01-02 15:04"), event.GetEnd().Format("15:04"))
 				default:
 				}
@@ -185,7 +210,7 @@ func main() {
 				}
 			}
 		}
-		if count {
+		if a.count {
 			fmt.Fprintf(os.Stdout, " New events written: %d\n", eventsSaved)
 		}
 	} else {
