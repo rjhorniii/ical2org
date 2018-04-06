@@ -12,21 +12,21 @@ import (
 	"time"
 )
 
-
-	type args struct {
-		dupfile string
-		appfile string
-		outfile string
-		afterfile string
-		dupflag bool
-		sched bool
-		active bool
-		inactive bool
-		repeats bool
-		dead bool
-		count bool
-		after bool
-	}
+type args struct {
+	dupfile   string
+	appfile   string
+	outfile   string
+	afterfile string
+	dupflag   bool
+	sched     bool
+	active    bool
+	inactive  bool
+	repeats   bool
+	dead      bool
+	count     bool
+	after     bool
+	args[]    string
+}
 
 func main() {
 
@@ -56,14 +56,15 @@ func main() {
 	a.appfile = *appPtr
 	a.outfile = *outPtr
 	a.afterfile = *afterPtr
+	a.args = flag.Args()
 
 	process(a)
 }
 
-func process (a args) {
+func process(a args) {
 
 	var after bool
-	
+
 	afterTime := time.Now()
 	if a.afterfile != "" {
 		if strings.HasPrefix(a.afterfile, "-") {
@@ -88,7 +89,7 @@ func process (a args) {
 	}
 
 	// Verify that input and output are present
-	if len(flag.Args()) == 0 {
+	if len(a.args) == 0 {
 		fmt.Println("At least one input argument is required.")
 		return
 	}
@@ -114,7 +115,7 @@ func process (a args) {
 	inputChan := parser.GetInputChan()
 
 	// send referenced arguments
-	for _, url := range flag.Args() {
+	for _, url := range a.args {
 		inputChan <- url
 	}
 
