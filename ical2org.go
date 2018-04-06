@@ -151,6 +151,10 @@ func process(a args) {
 				if dupIDs[event.GetID()] {
 					continue
 				}
+				if a.dupflag {
+					dupIDs[event.GetID()] = true
+					fmt.Printf(" duplicate ID added %s\n", event.GetID())
+				}
 				// eliminate events before after
 				if after {
 					if event.GetStart().Before(afterTime) {

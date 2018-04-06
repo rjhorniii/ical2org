@@ -1,0 +1,137 @@
+* DICOM WG-29 tcon 2018-02-22 10:30 -11:30 USA ET  <2018-02-22 10:30>
+  :ICALCONTENTS:
+  :ORGUID: e5f473274d29916e5ab94f4a6030f9e6
+  :ORIGINAL-UID: 040000008200E00074C5B7101A82E0080000000080CD630B62A7D301000000000000000
+  :DTSTART: 2018-02-22 10:30
+  :DTEND: 2018-02-22 11:30
+  :DTSTAMP: 2018-02-17 01:17
+  :ATTENDEE:  with email 
+  :ORGANIZER: "Kowalczyk, Luiza" with email 
+  :TZIDS: TZID=Eastern Standard Time:
+  :RRULE: 
+  :END:
+** Description
+
+  PLEASE ACCEPT OR DECLINE ONLY.  The Accept/Decline response is recorded but not opened. Use a separate e-mail for additional messages to the sender. Please do not change the subject line when responding!
+  =================================================================================================================================================================
+  To: DICOM WG-29
+  
+  This is an invitation for WG-29 t-con scheduled for Thursday, February 22, 2018, 10:30 am-11:30 am  USA ET.
+  
+  The agenda will be distributed and posted in the meeting folder later:  ftp://d9-workgrps:Private15@medical.nema.org/MEDICAL/Private/Dicom/WORKGRPS/WG29/2018/2018-02-22/
+  
+  [Please post proposals, relevant papers and other information in this ftp folder. (For a refresher on how to use the DICOM ftp folders, see: ftp://d9-workgrps:Private15@medical.nema.org/MEDICAL/Private/Dicom/DICOM-practical-info-for-Members&Observers.doc]
+  ===================================================================================================================================================
+  This e-mail includes the call-in/log-on information: see below.  This information is  also posted in the DICOM Calendar (Please do web search for  ‘DICOM Calendar ‘and double click on the event.)
+  
+  Thu, Feb 22, 2018 10:30 AM - 11:30 AM EST
+  https://global.gotomeeting.com/join/983698949
+  United States: +1 (571) 317-3129
+  
+  Access Code: 983-698-949
+  
+  Australia: +61 2 9087 3604
+  Austria: +43 7 2081 5427
+  Belgium: +32 28 93 7018
+  Canada: +1 (647) 497-9391
+  Denmark: +45 32 72 03 82
+  Finland: +358 923 17 0568
+  France: +33 170 950 594
+  Germany: +49 692 5736 7317
+  Ireland: +353 15 360 728
+  Italy: +39 0 247 92 13 01
+  Netherlands: +31 207 941 377
+  New Zealand: +64 9 280 6302
+  Norway: +47 21 93 37 51
+  Spain: +34 932 75 2004
+  Sweden: +46 853 527 836
+  Switzerland: +41 225 4599 78
+  United Kingdom: +44 330 221 0088
+  
+  First GoToMeeting? Let's do a quick system check: https://link.gotomeeting.com/system-check
+  
+  
+  Thank you for your participation!
+  
+  Luiza Kowalczyk
+  Senior Manager, DICOM Operations
+  Phone: +1-703-655-99-11
+  lkowalczyk@medicalimaging.org<mailto:lkowalczyk@medicalimaging.org>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+** Location https://global.gotomeeting.com/join/983698949 
+* DICOM WG-14 t-con 2018-02-21 09.00-10.00 USA ET - Invitation <2018-02-21 09:00>
+  :ICALCONTENTS:
+  :ORGUID: f553237e0ed7181b43bc5fdbcaccf51b
+  :ORIGINAL-UID: 040000008200E00074C5B7101A82E00800000000C0E8178E9893D301000000000000000
+  :DTSTART: 2018-02-21 09:00
+  :DTEND: 2018-02-21 10:00
+  :DTSTAMP: 2018-01-22 21:02
+  :ATTENDEE:  with email 
+  :ORGANIZER: "Vastagh, Stephen" with email 
+  :TZIDS: TZID=Eastern Standard Time:
+  :RRULE: 
+  :END:
+** Description
+
+  PLEASE ACCEPT OR DECLINE ONLY.  The Accept/Decline response is recorded but not opened.  Use a separate e-mail for additional messages to the sender.  Please do not change the subject line when responding!
+  Feel free to forward this invitation to anyone that may be interested in the re-activation of WG-14 Security. See  http://www.dicomstandard.org/participate/  for more information on participation.
+  ===================================================================================================================================================================
+  To:  DICOM WG-14 Security
+  Lawrence Tarbox, User Co-Chair, invites you to the February t-con of WG-14, on Wednesday, February 21, 2018 -  09:00 - 10:00 USA ET.
+  The Agenda will be distributed later and be also posted in the meeting foldeftp://d9-workgrps:Private15@medical.nema.org/MEDICAL/Private/Dicom/WORKGRPS/Wg14/2018/2018-02-21/
+  Please post proposals, relevant papers and other information in the above meeting folder.   (For a refresher on how to use the DICOM ftp folders see: ftp://d9-workgrps:Private15@medical.nema.org/MEDICAL/Private/Dicom/DICOM-practical-info-for-Members&Observers.doc )
+  ====================================================================================================================================================================================
+  This e-mail includes the call-in/log-on information below. The same call-in / log-on information is also posted in the DICOM Calendar: search (google)  ‘DICOM Calendar’ and double click on this event.
+  
+  
+  DICOM WG-14 t-con 2018-02-21 09.00-10.00 USA ET
+  Wed, Feb 21, 2018 9:00 AM - 10:00 AM EST
+  Please join my meeting from your computer, tablet or smartphone.
+  https://global.gotomeeting.com/join/126909565
+  You can also dial in using your phone.
+  United States: +1 (786) 535-3219
+  Access Code: 126-909-565
+  More phone numbers
+  Australia: +61 2 9087 3604
+  Austria: +43 7 2081 5427
+  Belgium: +32 28 93 7018
+  Canada: +1 (647) 497-9350
+  Denmark: +45 32 72 03 82
+  Finland: +358 923 17 0568
+  France: +33 170 950 594
+  Germany: +49 692 5736 7317
+  Ireland: +353 15 360 728
+  Italy: +39 0 247 92 13 01
+  Netherlands: +31 207 941 377
+  New Zealand: +64 9 280 6302
+  Norway: +47 21 93 37 51
+  Spain: +34 932 75 2004
+  Sweden: +46 853 527 827
+  Switzerland: +41 225 4599 78
+  United Kingdom: +44 20 3713 5028
+  Joining from a video-conferencing room or system?
+  Dial: 67.217.95.2##126909565
+  Cisco devices: 126909565@67.217.95.2<mailto:126909565@67.217.95.2>
+  First GoToMeeting? Let's do a quick system check: https://link.gotomeeting.com/system-check
+  
+  Sincerely,
+  
+  Stephen Vastagh
+  Secretary Pro Tem
+  Consultant to the DICOM Secretariat
+  
+  
+  
+  
+** Location https://global.gotomeeting.com/join/126909565  
