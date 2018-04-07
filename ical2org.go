@@ -25,7 +25,7 @@ type args struct {
 	dead      bool
 	count     bool
 	after     bool
-	args[]    string
+	args      []string
 }
 
 func main() {
