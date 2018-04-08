@@ -15,20 +15,14 @@ import (
 
 func TestMultiple(t *testing.T) {
 	a := args{outfile: "tests/xx91596.org", count: true, args: []string{"tests/xx91596.ics", "tests/test-vcal-3.vcs", "tests/wg-29.ics"}}
-	err := os.Remove(a.outfile)
-	if err != nil {
-		t.Error(err)
-	}
+
 	process(a)
 	// order is unpredicatable so no comparison
 }
 
 func TestX91596(t *testing.T) {
 	a := args{outfile: "tests/xx91596.org", args: []string{"tests/xx91596.ics"}}
-	err := os.Remove(a.outfile)
-	if err != nil {
-		t.Error(err)
-	}
+
 	process(a)
 	// compare with org-correct output
 	if compareFiles(a.outfile, "tests/xx91596.org-correct", t) == false {
@@ -37,10 +31,7 @@ func TestX91596(t *testing.T) {
 }
 func TestDeadline(t *testing.T) {
 	a := args{outfile: "tests/xx91596.org", dead: true, args: []string{"tests/xx91596.ics"}}
-	err := os.Remove(a.outfile)
-	if err != nil {
-		t.Error(err)
-	}
+
 	process(a)
 	// compare with org-dead
 	if compareFiles(a.outfile, "tests/xx91596.org-dead", t) == false {
@@ -49,10 +40,7 @@ func TestDeadline(t *testing.T) {
 }
 func TestSchedule(t *testing.T) {
 	a := args{outfile: "tests/xx91596.org", sched: true, args: []string{"tests/xx91596.ics"}}
-	err := os.Remove(a.outfile)
-	if err != nil {
-		t.Error(err)
-	}
+
 	process(a)
 	// compare with org-scheduled
 	if compareFiles(a.outfile, "tests/xx91596.org-scheduled", t) == false {
@@ -61,10 +49,7 @@ func TestSchedule(t *testing.T) {
 }
 func TestActive(t *testing.T) {
 	a := args{outfile: "tests/xx91596.org", active: true, args: []string{"tests/xx91596.ics"}}
-	err := os.Remove(a.outfile)
-	if err != nil {
-		t.Error(err)
-	}
+
 	process(a)
 	// compare with org-correct
 	if compareFiles(a.outfile, "tests/xx91596.org-correct", t) == false {
@@ -74,10 +59,7 @@ func TestActive(t *testing.T) {
 
 func TestInactive(t *testing.T) {
 	a := args{outfile: "tests/xx91596.org", inactive: true, args: []string{"tests/xx91596.ics"}}
-	err := os.Remove(a.outfile)
-	if err != nil {
-		t.Error(err)
-	}
+
 	process(a)
 	// compare with org-inactive
 	if compareFiles(a.outfile, "tests/xx91596.org-inactive", t) == false {
@@ -87,10 +69,7 @@ func TestInactive(t *testing.T) {
 
 func TestDupflag(t *testing.T) {
 	a := args{outfile: "tests/xx91596.org", dupflag: true, args: []string{"tests/xx91596.ics", "tests/xx91596a.ics"}}
-	err := os.Remove(a.outfile)
-	if err != nil {
-		t.Error(err)
-	}
+
 	process(a)
 	// compare with org-correct
 	if compareFiles(a.outfile, "tests/xx91596.org-correct", t) == false {
@@ -100,10 +79,7 @@ func TestDupflag(t *testing.T) {
 
 func TestDual(t *testing.T) {
 	a := args{outfile: "tests/xx91596.org", count: true, args: []string{"tests/xx91596.ics", "tests/xx91596a.ics"}}
-	err := os.Remove(a.outfile)
-	if err != nil {
-		t.Error(err)
-	}
+
 	process(a)
 	// compare with org-dual
 	if compareFiles(a.outfile, "tests/xx91596.org-dual", t) == false {
@@ -113,10 +89,7 @@ func TestDual(t *testing.T) {
 
 func TestAfterDate(t *testing.T) {
 	a := args{outfile: "tests/xx91596.org", afterfile: "2030-01-01", args: []string{"tests/xx91596.ics"}}
-	err := os.Remove(a.outfile)
-	if err != nil {
-		t.Error(err)
-	}
+
 	process(a)
 	// compare with empty
 	finfo, err := os.Stat(a.outfile)
@@ -131,7 +104,7 @@ func TestAfterDuration(t *testing.T) {
 	// remove tests/xx91596.org
 	a := args{appfile: "tests/xx91596.org", afterfile: "-36h", args: []string{"tests/xx91596.ics"}}
 	err := os.Remove(a.appfile)
-	if err != nil {
+	if !os.IsNotExist(err) && err != nil {
 		t.Error(err)
 	}
 	process(a)
