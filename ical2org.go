@@ -219,7 +219,7 @@ func process(a args) {
 			}
 		}
 		if a.count {
-			// fmt.Fprintf(os.Stdout, " New events written: %d\n", eventsSaved)
+			fmt.Fprintf(os.Stdout, " New events written: %d\n", eventsSaved)
 			errors, _ := parser.GetErrors()
 			if( len(errors) != 0) {
 				fmt.Printf( "errors occurred %v\n", errors)
