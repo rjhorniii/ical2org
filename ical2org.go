@@ -116,10 +116,13 @@ func process(a args) {
 
 	// send referenced arguments
 	for _, url := range a.args {
+		// fmt.Printf( "send filename: %s\n", url)
+		parser.Add()  // another calendar to wait for
 		inputChan <- url
 	}
 
-	//  wait for the calendar to be parsed
+	close(inputChan)
+	//  wait for the final calendar to be parsed
 	parser.Wait()
 
 	// get all calendars in this parser
@@ -216,7 +219,11 @@ func process(a args) {
 			}
 		}
 		if a.count {
-			fmt.Fprintf(os.Stdout, " New events written: %d\n", eventsSaved)
+			// fmt.Fprintf(os.Stdout, " New events written: %d\n", eventsSaved)
+			errors, _ := parser.GetErrors()
+			if( len(errors) != 0) {
+				fmt.Printf( "errors occurred %v\n", errors)
+			}
 		}
 	} else {
 		// error
