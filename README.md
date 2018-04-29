@@ -109,7 +109,7 @@ and calendars that contain historical events.  New events will not be
 created in the org file for those duplicates.
 
 The duplicates file can also be an orgmode file that is manually
-mainatined. In the manually maintained org drawer you list the ORGUIDs
+maintained. In the manually maintained org drawer you list the ORGUIDs
 that should be considered duplicate:
 
 ```
@@ -253,7 +253,7 @@ processing and ask for the attachment number to process.  The result
 will be a buffer indicating the number of events captured.
 
 ```
-;; define a pipe to parse appointments from mu4e
+;; define pipes to parse appointments from mu4e
 
 (defun process-ical-appointments (msg attachnum)
   "schedule appointments onto /home/rjhorniii/org/events-g.org"
@@ -261,6 +261,13 @@ will be a buffer indicating the number of events captured.
   	"/home/rjhorniii/bin/ical2org -count -d=/home/rjhorniii/org/events-g.org -a=/home/rjhorniii/org/events-g.org -"))
 ;; define 's' as the shortcut
 (add-to-list 'mu4e-view-attachment-actions '("schedule appointment" . process-ical-appointments) t)
+
+(defun view-ical-appointments (msg attachnum)
+  "convert ical attachment and show in buffer"
+  (mu4e-view-pipe-attachment msg attachnum "/home/hornrj/bin/ical2org -"))
+;; define 'v' as the shortcut
+(add-to-list 'mu4e-view-attachment-actions '("view appointment" . view-ical-appointments) t)
+
 ```
 
 The `-count` indicates that the generated event count be sent to
@@ -268,3 +275,6 @@ stdout.  The file `events-g.org` will be updated. The use of `-`
 indicates that input will be on stdin.  Mu4e deals with extracting the
 attachment and sending it to the indicated command, and taking the
 output and showing it as an emacs buffer.
+
+The keystrokes `A`, `v` will place the resulting org-mode event in a
+buffer (not in org mode) for the user to examine, modify, save, etc.
