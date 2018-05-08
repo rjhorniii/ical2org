@@ -175,13 +175,13 @@ func process(a args) {
 					format = "* %s <%s>\n"
 				}
 
-				fmt.Fprintf(f, format, strings.Replace(event.GetSummary(), `\,`, ",", -1), event.GetStart().Format("2006-01-02 15:04"))
+				fmt.Fprintf(f, format, strings.Replace(event.GetSummary(), `\,`, ",", -1), event.GetStart().Format("2006-01-02 Mon 15:04"))
 				// Scheduled, Deadline, or nothing depending upon switches
 				switch {
 				case a.dead:
-					fmt.Fprintf(f, "    DEADLINE: <%s-%s>\n", event.GetStart().Format("2006-01-02 15:04"), event.GetEnd().Format("15:04"))
+					fmt.Fprintf(f, "    DEADLINE: <%s-%s>\n", event.GetStart().Format("2006-01-02 Mon 15:04"), event.GetEnd().Format("15:04"))
 				case a.sched:
-					fmt.Fprintf(f, "    SCHEDULED: <%s-%s>\n", event.GetStart().Format("2006-01-02 15:04"), event.GetEnd().Format("15:04"))
+					fmt.Fprintf(f, "    SCHEDULED: <%s-%s>\n", event.GetStart().Format("2006-01-02 Mon 15:04"), event.GetEnd().Format("15:04"))
 				default:
 				}
 				// Print drawer contents
