@@ -6,6 +6,7 @@ Usage: `ical2org [-d=<duplicates>] [-o=output] [-a=append]
        [--inactive] [--active]
        [--deadline] [--scheduled]
        [--repeats] [-dupinput] [-count] [-after duration | date]
+       [--label label]
        input files`
 
 The input files can be URLs ("http://...."), local files, or stdin.  If the filename given is "-" then stdin is read.
@@ -51,6 +52,13 @@ Example output:
   ...
 
 ```
+
+Other options:
+* `label`, provides a convert label that can be specified on the command line and which will be placed in ICALCONTENTS.  This can be useful for debugging and tracing.
+* `Repeats`, see below
+* `counts`, sends to stdout a count of events converted.  Should only be used when -o or -a are specified.  This is useful when running fetch and convert automatically at intervals.
+* `dupinput`, see below
+* `after`, see below
 
 ### Installation
 

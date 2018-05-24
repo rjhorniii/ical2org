@@ -10,9 +10,6 @@ import (
 	//"github.com/davecgh/go-spew/spew"
 )
 
-//func TestMain(t *testing.T) {
-//}
-
 func TestMultiple(t *testing.T) {
 	a := args{outfile: "tests/xx91596.org", count: true, args: []string{"tests/xx91596.ics", "tests/test-vcal-3.vcs", "tests/wg-29.ics"}}
 
@@ -119,6 +116,15 @@ func TestAfterDuration(t *testing.T) {
 	}
 }
 
+func TestLabel(t *testing.T) {
+	a := args{outfile: "tests/xx91596.org", label: "test-label", args: []string{"tests/xx91596.ics"}}
+
+	process(a)
+	// compare with org-inactive
+	if compareFiles(a.outfile, "tests/xx91596.org-labeled", t) == false {
+		t.Fail()
+	}
+}
 //
 // file comparison function.  This assumes files are small and memory is large.
 // It reads the whole files into memory and then compares.

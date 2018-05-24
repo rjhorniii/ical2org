@@ -17,6 +17,7 @@ type args struct {
 	appfile   string
 	outfile   string
 	afterfile string
+	label     string
 	dupflag   bool
 	sched     bool
 	active    bool
@@ -35,12 +36,14 @@ func main() {
 	var appPtr *string
 	var outPtr *string
 	var afterPtr *string
+	var labelPtr *string
 
 	// define flags
 	dupfilePtr = flag.String("d", "", "Filename for duplicate removal")
 	appPtr = flag.String("a", "", "Filename to append new events")
 	outPtr = flag.String("o", "", "Filename for event output, default stdout")
 	afterPtr = flag.String("after", "", "Only use events at and after this date")
+	labelPtr = flag.String("label", "", "Label word in drawer to identify conversion")
 	flag.BoolVar(&a.sched, "scheduled", false, "Event time should be scheduled")
 	flag.BoolVar(&a.dead, "deadline", false, "Event time should be deadline")
 	flag.BoolVar(&a.active, "active", true, "Headline timestamp should be active")
@@ -56,6 +59,7 @@ func main() {
 	a.appfile = *appPtr
 	a.outfile = *outPtr
 	a.afterfile = *afterPtr
+	a.label = *labelPtr
 	a.args = flag.Args()
 
 	process(a)
@@ -187,6 +191,9 @@ func process(a args) {
 				// Print drawer contents
 				fmt.Fprintln(f, "  :ICALCONTENTS:")
 				fmt.Fprintf(f, "  :ORGUID: %s\n", event.GetID())
+				if a.label != "" {
+					fmt.Fprintf(f, "  :CONVERTLABEL: %s\n", a.label)
+				}
 				fmt.Fprintf(f, "  :ORIGINAL-UID: %s\n", event.GetImportedID())
 				fmt.Fprintf(f, "  :DTSTART: %s\n", event.GetStart().Format("2006-01-02 15:04"))
 				fmt.Fprintf(f, "  :DTEND: %s\n", event.GetEnd().Format("2006-01-02 15:04"))
