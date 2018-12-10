@@ -172,12 +172,14 @@ func process(a args) {
 				// print the event
 				// choose active or inactive timestamp
 				summary := strings.Replace(event.GetSummary(), `\,`, ",", -1)
-				start := event.GetStart().Format("2006-01-02 Mon 15:04")
+				start := event.GetStart()
+				end := event.GetEnd()
+				startFormatted := start.Local().Format("2006-01-02 Mon 15:04")
 				switch {
 				case a.inactive:
-					fmt.Fprintf(f, "* %s [%s]\n", summary, start)
+					fmt.Fprintf(f, "* %s [%s]\n", summary, startFormatted)
 				case a.active:
-					fmt.Fprintf(f, "* %s <%s>\n", summary, start)
+					fmt.Fprintf(f, "* %s <%s>\n", summary, startFormatted)
 				default:
 					fmt.Fprintf(f, "* %s\n", summary)
 				}
@@ -185,11 +187,12 @@ func process(a args) {
 				// Scheduled, Deadline, or nothing depending upon switches
 				switch {
 				case a.dead:
-					fmt.Fprintf(f, "    DEADLINE: <%s-%s>\n", event.GetStart().Format("2006-01-02 Mon 15:04"), event.GetEnd().Format("15:04"))
+					fmt.Fprintf(f, "    DEADLINE: <%s-%s>\n", startFormatted, end.Local().Format("15:04"))
 				case a.sched:
-					fmt.Fprintf(f, "    SCHEDULED: <%s-%s>\n", event.GetStart().Format("2006-01-02 Mon 15:04"), event.GetEnd().Format("15:04"))
+					fmt.Fprintf(f, "    SCHEDULED: <%s-%s>\n", startFormatted, end.Local().Format("15:04"))
 				default:
 				}
+
 				// Print drawer contents
 				fmt.Fprintln(f, "  :ICALCONTENTS:")
 				fmt.Fprintf(f, "  :ORGUID: %s\n", event.GetID())
