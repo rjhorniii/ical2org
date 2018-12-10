@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	// "fmt"
 	"io/ioutil"
 	"os"
 	"time"
@@ -46,6 +46,17 @@ func TestSchedule(t *testing.T) {
 	process(a)
 	// compare with org-scheduled
 	if compareFiles(a.outfile, "tests/xx91596.org-scheduled", t) == false {
+		t.Fail()
+	}
+}
+
+func TestScheduleLocal(t *testing.T) {
+	time.Local, _ = time.LoadLocation("America/New_York")
+	a := args{outfile: "tests/xx91596.org", sched: true, args: []string{"tests/xx91596.ics"}}
+
+	process(a)
+	// compare with org-scheduled
+	if compareFiles(a.outfile, "tests/xx91596.org-scheduled-local", t) == false {
 		t.Fail()
 	}
 }
@@ -177,7 +188,7 @@ func compareFiles(fname1 string, fname2 string, t *testing.T) bool {
 	str2 := string(f2)
 
 	if str1 != str2 {
-		fmt.Printf("test file:\n%v\n\ncomparison file:\n%v\n", str1, str2)
+		// fmt.Printf("test file:\n%v\n\ncomparison file:\n%v\n", str1, str2)
 		return false
 	}
 	return true
