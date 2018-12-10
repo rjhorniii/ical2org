@@ -184,14 +184,15 @@ func process(a args) {
 					fmt.Fprintf(f, "* %s\n", summary)
 				}
 
-				// Scheduled, Deadline, or nothing depending upon switches
-				switch {
-				case a.dead:
-					fmt.Fprintf(f, "    DEADLINE: <%s-%s>\n", startFormatted, end.Local().Format("15:04"))
-				case a.sched:
-					fmt.Fprintf(f, "    SCHEDULED: <%s-%s>\n", startFormatted, end.Local().Format("15:04"))
-				default:
+				// Scheduled and/or Deadline depending upon switches
+				fmt.Fprintf(f, "  ")
+				if a.dead {
+					fmt.Fprintf(f, "DEADLINE: <%s-%s>", startFormatted, end.Local().Format("15:04"))
 				}
+				if a.sched {
+					fmt.Fprintf(f, "SCHEDULED: <%s-%s>", startFormatted, end.Local().Format("15:04"))
+				}
+				fmt.Fprintf(f, "\n")
 
 				// Print drawer contents
 				fmt.Fprintln(f, "  :ICALCONTENTS:")
