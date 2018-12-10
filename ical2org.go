@@ -46,7 +46,7 @@ func main() {
 	labelPtr = flag.String("label", "", "Label word in drawer to identify conversion")
 	flag.BoolVar(&a.sched, "scheduled", false, "Event time should be scheduled")
 	flag.BoolVar(&a.dead, "deadline", false, "Event time should be deadline")
-	flag.BoolVar(&a.active, "active", true, "Headline timestamp should be active")
+	flag.BoolVar(&a.active, "active", false, "Headline timestamp should be active")
 	flag.BoolVar(&a.inactive, "inactive", false, "Headline timestamp should be inactive")
 	flag.BoolVar(&a.repeats, "repeats", true, "Generate an event per repeat")
 	flag.BoolVar(&a.dupflag, "dupinput", false, "Do not generate duplicates from input")
@@ -121,7 +121,7 @@ func process(a args) {
 	// send referenced arguments
 	for _, url := range a.args {
 		// fmt.Printf( "send filename: %s\n", url)
-		parser.Add()  // another calendar to wait for
+		parser.Add() // another calendar to wait for
 		inputChan <- url
 	}
 
@@ -171,15 +171,17 @@ func process(a args) {
 				eventsSaved++
 				// print the event
 				// choose active or inactive timestamp
-				format := "* %s <%s>\n"
+				summary := strings.Replace(event.GetSummary(), `\,`, ",", -1)
+				start := event.GetStart().Format("2006-01-02 Mon 15:04")
 				switch {
 				case a.inactive:
-					format = "* %s [%s]\n"
+					fmt.Fprintf(f, "* %s [%s]\n", summary, start)
 				case a.active:
-					format = "* %s <%s>\n"
+					fmt.Fprintf(f, "* %s <%s>\n", summary, start)
+				default:
+					fmt.Fprintf(f, "* %s\n", summary)
 				}
 
-				fmt.Fprintf(f, format, strings.Replace(event.GetSummary(), `\,`, ",", -1), event.GetStart().Format("2006-01-02 Mon 15:04"))
 				// Scheduled, Deadline, or nothing depending upon switches
 				switch {
 				case a.dead:
@@ -228,8 +230,8 @@ func process(a args) {
 		if a.count {
 			fmt.Fprintf(os.Stdout, " New events written: %d\n", eventsSaved)
 			errors, _ := parser.GetErrors()
-			if( len(errors) != 0) {
-				fmt.Printf( "errors occurred %v\n", errors)
+			if len(errors) != 0 {
+				fmt.Printf("errors occurred %v\n", errors)
 			}
 		}
 	} else {
