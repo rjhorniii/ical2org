@@ -174,25 +174,36 @@ func process(a args) {
 				summary := strings.Replace(event.GetSummary(), `\,`, ",", -1)
 				start := event.GetStart()
 				end := event.GetEnd()
-				startFormatted := start.Local().Format("2006-01-02 Mon 15:04")
+				startLocal := start.Local().Format("2006-01-02 Mon 15:04")
+				endLocal := end.Local().Format("2006-01-02 Mon 15:04")
+				endLocalTime := end.Local().Format("15:04")
 				switch {
 				case a.inactive:
-					fmt.Fprintf(f, "* %s [%s]\n", summary, startFormatted)
+					fmt.Fprintf(f, "* %s [%s]\n", summary, startLocal)
 				case a.active:
-					fmt.Fprintf(f, "* %s <%s>\n", summary, startFormatted)
+					fmt.Fprintf(f, "* %s <%s>\n", summary, startLocal)
 				default:
 					fmt.Fprintf(f, "* %s\n", summary)
 				}
 
 				// Scheduled and/or Deadline depending upon switches
-				fmt.Fprintf(f, "  ")
-				if a.dead {
-					fmt.Fprintf(f, "DEADLINE: <%s-%s>", startFormatted, end.Local().Format("15:04"))
+				if a.dead || a.sched {
+					sy, sm, sd := start.Date()
+					ey, em, ed := end.Date()
+					sameDay := sy == ey && sm == em && sd == ed
+					rangeFormat := "<%s>--<%s>\n"
+					endFormatted := endLocal
+					if sameDay {
+						rangeFormat = "<%s-%s>\n"
+						endFormatted = endLocalTime
+					}
+					if a.dead {
+						fmt.Fprintf(f, "  DEADLINE: "+rangeFormat, startLocal, endFormatted)
+					}
+					if a.sched {
+						fmt.Fprintf(f, "  SCHEDULED: "+rangeFormat, startLocal, endFormatted)
+					}
 				}
-				if a.sched {
-					fmt.Fprintf(f, "SCHEDULED: <%s-%s>", startFormatted, end.Local().Format("15:04"))
-				}
-				fmt.Fprintf(f, "\n")
 
 				// Print drawer contents
 				fmt.Fprintln(f, "  :ICALCONTENTS:")
