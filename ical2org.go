@@ -46,7 +46,7 @@ func main() {
 	labelPtr = flag.String("label", "", "Label word in drawer to identify conversion")
 	flag.BoolVar(&a.sched, "scheduled", false, "Event time should be scheduled")
 	flag.BoolVar(&a.dead, "deadline", false, "Event time should be deadline")
-	flag.BoolVar(&a.active, "active", true, "Headline timestamp should be active")
+	flag.BoolVar(&a.active, "active", false, "Headline timestamp should be active")
 	flag.BoolVar(&a.inactive, "inactive", false, "Headline timestamp should be inactive")
 	flag.BoolVar(&a.repeats, "repeats", true, "Generate an event per repeat")
 	flag.BoolVar(&a.dupflag, "dupinput", false, "Do not generate duplicates from input")
@@ -121,7 +121,7 @@ func process(a args) {
 	// send referenced arguments
 	for _, url := range a.args {
 		// fmt.Printf( "send filename: %s\n", url)
-		parser.Add()  // another calendar to wait for
+		parser.Add() // another calendar to wait for
 		inputChan <- url
 	}
 
@@ -171,23 +171,40 @@ func process(a args) {
 				eventsSaved++
 				// print the event
 				// choose active or inactive timestamp
-				format := "* %s <%s>\n"
+				summary := strings.Replace(event.GetSummary(), `\,`, ",", -1)
+				start := event.GetStart()
+				end := event.GetEnd()
+				startLocal := start.Local().Format("2006-01-02 Mon 15:04")
+				endLocal := end.Local().Format("2006-01-02 Mon 15:04")
+				endLocalTime := end.Local().Format("15:04")
 				switch {
 				case a.inactive:
-					format = "* %s [%s]\n"
+					fmt.Fprintf(f, "* %s [%s]\n", summary, startLocal)
 				case a.active:
-					format = "* %s <%s>\n"
+					fmt.Fprintf(f, "* %s <%s>\n", summary, startLocal)
+				default:
+					fmt.Fprintf(f, "* %s\n", summary)
 				}
 
-				fmt.Fprintf(f, format, strings.Replace(event.GetSummary(), `\,`, ",", -1), event.GetStart().Format("2006-01-02 Mon 15:04"))
-				// Scheduled, Deadline, or nothing depending upon switches
-				switch {
-				case a.dead:
-					fmt.Fprintf(f, "    DEADLINE: <%s-%s>\n", event.GetStart().Format("2006-01-02 Mon 15:04"), event.GetEnd().Format("15:04"))
-				case a.sched:
-					fmt.Fprintf(f, "    SCHEDULED: <%s-%s>\n", event.GetStart().Format("2006-01-02 Mon 15:04"), event.GetEnd().Format("15:04"))
-				default:
+				// Scheduled and/or Deadline depending upon switches
+				if a.dead || a.sched {
+					sy, sm, sd := start.Date()
+					ey, em, ed := end.Date()
+					sameDay := sy == ey && sm == em && sd == ed
+					rangeFormat := "<%s>--<%s>\n"
+					endFormatted := endLocal
+					if sameDay {
+						rangeFormat = "<%s-%s>\n"
+						endFormatted = endLocalTime
+					}
+					if a.dead {
+						fmt.Fprintf(f, "  DEADLINE: "+rangeFormat, startLocal, endFormatted)
+					}
+					if a.sched {
+						fmt.Fprintf(f, "  SCHEDULED: "+rangeFormat, startLocal, endFormatted)
+					}
 				}
+
 				// Print drawer contents
 				fmt.Fprintln(f, "  :ICALCONTENTS:")
 				fmt.Fprintf(f, "  :ORGUID: %s\n", event.GetID())
@@ -228,8 +245,8 @@ func process(a args) {
 		if a.count {
 			fmt.Fprintf(os.Stdout, " New events written: %d\n", eventsSaved)
 			errors, _ := parser.GetErrors()
-			if( len(errors) != 0) {
-				fmt.Printf( "errors occurred %v\n", errors)
+			if len(errors) != 0 {
+				fmt.Printf("errors occurred %v\n", errors)
 			}
 		}
 	} else {

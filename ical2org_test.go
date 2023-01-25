@@ -4,6 +4,7 @@ import (
 	// "fmt"
 	"io/ioutil"
 	"os"
+	"time"
 	// "github.com/rjhorniii/ics-golang"
 	//	"github.com/davecgh/go-spew/spew"
 	"testing"
@@ -18,6 +19,7 @@ func TestMultiple(t *testing.T) {
 }
 
 func TestX91596(t *testing.T) {
+	time.Local, _ = time.LoadLocation("UTC")
 	a := args{outfile: "tests/xx91596.org", args: []string{"tests/xx91596.ics"}}
 
 	process(a)
@@ -27,6 +29,7 @@ func TestX91596(t *testing.T) {
 	}
 }
 func TestDeadline(t *testing.T) {
+	time.Local, _ = time.LoadLocation("UTC")
 	a := args{outfile: "tests/xx91596.org", dead: true, args: []string{"tests/xx91596.ics"}}
 
 	process(a)
@@ -35,7 +38,9 @@ func TestDeadline(t *testing.T) {
 		t.Fail()
 	}
 }
+
 func TestSchedule(t *testing.T) {
+	time.Local, _ = time.LoadLocation("UTC")
 	a := args{outfile: "tests/xx91596.org", sched: true, args: []string{"tests/xx91596.ics"}}
 
 	process(a)
@@ -44,12 +49,46 @@ func TestSchedule(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestScheduleLocal(t *testing.T) {
+	time.Local, _ = time.LoadLocation("America/New_York")
+	a := args{outfile: "tests/xx91596.org", sched: true, args: []string{"tests/xx91596.ics"}}
+
+	process(a)
+	// compare with org-scheduled
+	if compareFiles(a.outfile, "tests/xx91596.org-scheduled-local", t) == false {
+		t.Fail()
+	}
+}
+
+func TestDeadlineSchedule(t *testing.T) {
+	time.Local, _ = time.LoadLocation("UTC")
+	a := args{outfile: "tests/xx91596.org", dead: true, sched: true, args: []string{"tests/xx91596.ics"}}
+
+	process(a)
+	// compare with org-scheduled
+	if compareFiles(a.outfile, "tests/xx91596.org-deadline-scheduled", t) == false {
+		t.Fail()
+	}
+}
+
+func TestScheduleMultiday(t *testing.T) {
+	time.Local, _ = time.LoadLocation("UTC")
+	a := args{outfile: "tests/xx91596.org", sched: true, args: []string{"tests/multiday.ics"}}
+
+	process(a)
+	// compare with org-scheduled
+	if compareFiles(a.outfile, "tests/multiday.org", t) == false {
+		t.Fail()
+	}
+}
+
 func TestActive(t *testing.T) {
 	a := args{outfile: "tests/xx91596.org", active: true, args: []string{"tests/xx91596.ics"}}
 
 	process(a)
 	// compare with org-correct
-	if compareFiles(a.outfile, "tests/xx91596.org-correct", t) == false {
+	if compareFiles(a.outfile, "tests/xx91596.org-active", t) == false {
 		t.Fail()
 	}
 }
@@ -125,6 +164,7 @@ func TestLabel(t *testing.T) {
 		t.Fail()
 	}
 }
+
 //
 // file comparison function.  This assumes files are small and memory is large.
 // It reads the whole files into memory and then compares.
@@ -148,7 +188,7 @@ func compareFiles(fname1 string, fname2 string, t *testing.T) bool {
 	str2 := string(f2)
 
 	if str1 != str2 {
-		//		spew.Printf("test file: %v \n\ncomparison file %v\n", str1, str2)
+		// fmt.Printf("test file:\n%v\n\ncomparison file:\n%v\n", str1, str2)
 		return false
 	}
 	return true
